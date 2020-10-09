@@ -1,4 +1,4 @@
-<h1 align="center">SKPhotoBrowser</h1>
+<h1 align="center">SKPhotoBrowser-gif</h1>
 <H4 align="center">
 Simple PhotoBrowser/Viewer inspired by facebook, twitter photo browsers written by swift
 </H4>
@@ -7,9 +7,9 @@ Simple PhotoBrowser/Viewer inspired by facebook, twitter photo browsers written 
 <a href="https://developer.apple.com/swift">
    <img alt="Swift5" src="https://img.shields.io/badge/language-swift5.0-orange.svg?style=flat" />
  </a>
-<a href="http://cocoadocs.org/docsets/SKPhotoBrowser">
+<!-- <a href="http://cocoadocs.org/docsets/SKPhotoBrowser">
   <img src="https://img.shields.io/cocoapods/v/SKPhotoBrowser.svg?style=flat" />
-</a>
+</a> -->
 <a href="https://github.com/Carthage/Carthage">
    <img alt="Build Status" src="https://img.shields.io/badge/Carthage-compatible-4BC51D.svg?style=flat" />
  </a>
@@ -21,6 +21,7 @@ Simple PhotoBrowser/Viewer inspired by facebook, twitter photo browsers written 
 
 
 ## features
+- 👉🏻 GIF image support. 
 - Display one or more images by providing either `UIImage` objects, or string of URL array.
 - Photos can be zoomed and panned, and optional captions can be displayed
 - Minimalistic Facebook-like interface, swipe up/down to dismiss
@@ -56,16 +57,16 @@ Below is a table that shows which version of SKPhotoBrowser you should use for y
 #### CocoaPods
 available on CocoaPods. Just add the following to your project Podfile:
 ```
-pod 'SKPhotoBrowser'
+pod 'SKPhotoBrowser-gif'
 use_frameworks!
 ```
-
+<!-- 
 #### Carthage
 To integrate into your Xcode project using Carthage, specify it in your Cartfile:
 
 ```ogdl
 github "suzuki-0000/SKPhotoBrowser"
-```
+``` -->
 
 ## Usage
 See the code snippet below for an example of how to implement, or see the example project.
@@ -207,7 +208,7 @@ SKPhotoBrowserOptions.disableVerticalSwipe = true
 
 #### Delegate
 There's some trigger point you can handle using delegate. those are optional.
-See [SKPhotoBrowserDelegate](https://github.com/suzuki-0000/SKPhotoBrowser/blob/master/SKPhotoBrowser/SKPhotoBrowserDelegate.swift) for more details.
+See [SKPhotoBrowserDelegate](https://github.com/ghostlordstar/SKPhotoBrowser-gif/blob/master/SKPhotoBrowser/SKPhotoBrowserDelegate.swift) for more details.
 - didShowPhotoAtIndex(_ index:Int) 
 - willDismissAtPageIndex(_ index:Int)
 - willShowActionSheet(_ photoIndex: Int)
@@ -239,7 +240,7 @@ func didDismissAtPageIndex(_ index: Int) {
 
 #### Options
 You can access via `SKPhotoBrowserOptions`, which can use for browser control.
-See [SKPhotoBrowserOptions](https://github.com/suzuki-0000/SKPhotoBrowser/blob/master/SKPhotoBrowser/SKPhotoBrowserOptions.swift) for more details.
+See [SKPhotoBrowserOptions](https://github.com/ghostlordstar/SKPhotoBrowser-gif/blob/master/SKPhotoBrowser/SKPhotoBrowserOptions.swift) for more details.
 - single tap handling, dismiss/noaction
 - blackArea handling which is appearing outside of photo
 - bounce animation when appearing/dismissing
