@@ -46,6 +46,11 @@ open class SKPhoto: NSObject, SKPhotoProtocol {
         underlyingImage = holder
     }
     
+    convenience init(data: Data) {
+        self.init()
+        underlyingImage = UIImage.sk_gif(data: data)
+    }
+    
     open func checkCache() {
         guard let photoURL = photoURL else {
             return
@@ -87,16 +92,17 @@ open class SKPhoto: NSObject, SKPhotoProtocol {
                 
                 var webImage = image
                 
+                if data.imageType() == .GIF {
+                    if let tmpImg = UIImage.sk_gif(data: data) {
+                        webImage = tmpImg
+                    }
+                }
+                
                 if self.shouldCachePhotoURLImage {
                     if SKCache.sharedCache.imageCache is SKRequestResponseCacheable {
                         SKCache.sharedCache.setImageData(data, response: response, request: task?.originalRequest)
                     } else {
                         
-                        if data.imageType() == .GIF {
-                            if let tmpImg = UIImage.sk_gif(data: data) {
-                                webImage = tmpImg
-                            }
-                        }
                         SKCache.sharedCache.setImage(webImage, forKey: self.photoURL)
                     }
                 }
@@ -105,7 +111,6 @@ open class SKPhoto: NSObject, SKPhotoProtocol {
                     self.loadUnderlyingImageComplete()
                 }
             }
-            
         })
         task?.resume()
     }
@@ -119,6 +124,10 @@ open class SKPhoto: NSObject, SKPhotoProtocol {
 // MARK: - Static Function
 
 extension SKPhoto {
+    public static func photoWithData(_ data: Data) -> SKPhoto {
+        return SKPhoto(data: data)
+    }
+    
     public static func photoWithImage(_ image: UIImage) -> SKPhoto {
         return SKPhoto(image: image)
     }

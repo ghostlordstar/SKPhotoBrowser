@@ -1,5 +1,10 @@
 # Change Log
 
+## 6.2.1
+### Big Changed 
+- Fix gif display problem when cache is not turned on.
+- SKPhoto adds the function of initializing via Data.
+
 ## 6.2.0 
 ### Big Changed 
 - GIF image support.
