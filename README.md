@@ -21,7 +21,7 @@ Simple PhotoBrowser/Viewer inspired by facebook, twitter photo browsers written 
 
 
 ## features
-- 👉🏻 GIF image support. 
+- 👉🏻 GIF image support.  
 - Display one or more images by providing either `UIImage` objects, or string of URL array.
 - Photos can be zoomed and panned, and optional captions can be displayed
 - Minimalistic Facebook-like interface, swipe up/down to dismiss

@@ -1,5 +1,9 @@
 # Change Log
 
+## 6.2.0 
+### Big Changed 
+- GIF image support.
+
 ## 6.1.0
 
 ### Big Changed
