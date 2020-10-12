@@ -17,6 +17,8 @@ open class SKPhotoBrowser: UIViewController {
     open var initPageIndex: Int = 0
     open var activityItemProvider: UIActivityItemProvider?
     open var photos: [SKPhotoProtocol] = []
+    open var longGestureEnable: Bool = false
+    open var longGestureAction: ((_ browser: SKPhotoBrowser, _ index: Int, _ longGesture: UILongPressGestureRecognizer)->())?
     
     internal lazy var pagingScrollView: SKPagingScrollView = SKPagingScrollView(frame: self.view.frame, browser: self)
     
@@ -530,6 +532,13 @@ internal extension SKPhotoBrowser {
             
         } else if photos.count == 1 {
             dismissPhotoBrowser(animated: true)
+        }
+    }
+    
+    func longGestureAction(_ view: UIView, longGesture: UILongPressGestureRecognizer) {
+        if self.longGestureEnable && longGesture.state == .began {
+            self.delegate?.longGestureAction?(self, index: self.currentPageIndex, longGesture: longGesture)
+            self.longGestureAction?(self, self.currentPageIndex, longGesture)
         }
     }
 }

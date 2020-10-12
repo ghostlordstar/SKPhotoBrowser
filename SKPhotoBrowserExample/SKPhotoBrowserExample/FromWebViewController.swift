@@ -22,6 +22,7 @@ class FromWebViewController: UIViewController, SKPhotoBrowserDelegate {
     @IBAction func pushButton(_ sender: AnyObject) {
         let browser = SKPhotoBrowser(photos: createWebPhotos())
         browser.initializePageIndex(0)
+        browser.longGestureEnable = true
         browser.delegate = self
         
         present(browser, animated: true, completion: nil)
@@ -31,6 +32,11 @@ class FromWebViewController: UIViewController, SKPhotoBrowserDelegate {
 // MARK: - SKPhotoBrowserDelegate
 
 extension FromWebViewController {
+    
+    func longGestureAction(_ browser: SKPhotoBrowser, index: Int, longGesture: UILongPressGestureRecognizer) {
+        print("browser: \(browser), index: \(index), longGestrue:\(longGesture)")
+    }
+    
     func didDismissAtPageIndex(_ index: Int) {
     }
     

@@ -266,6 +266,10 @@ extension SKZoomingScrollView: UIScrollViewDelegate {
 // MARK: - SKDetectingImageViewDelegate
 
 extension SKZoomingScrollView: SKDetectingViewDelegate {
+    func handleLongTap(_ view: UIView, longGesture: UILongPressGestureRecognizer) {
+        browser?.longGestureAction(view, longGesture: longGesture)
+    }
+    
     func handleSingleTap(_ view: UIView, touch: UITouch) {
         guard let browser = browser else {
             return
@@ -292,6 +296,7 @@ extension SKZoomingScrollView: SKDetectingViewDelegate {
 // MARK: - SKDetectingImageViewDelegate
 
 extension SKZoomingScrollView: SKDetectingImageViewDelegate {
+    
     func handleImageViewSingleTap(_ touchPoint: CGPoint) {
         guard let browser = browser else {
             return

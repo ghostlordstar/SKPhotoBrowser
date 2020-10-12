@@ -11,6 +11,7 @@ import UIKit
 @objc protocol SKDetectingImageViewDelegate {
     func handleImageViewSingleTap(_ touchPoint: CGPoint)
     func handleImageViewDoubleTap(_ touchPoint: CGPoint)
+    func handleLongTap(_ view: UIView, longGesture: UILongPressGestureRecognizer)
 }
 
 class SKDetectingImageView: UIImageView {
@@ -33,6 +34,10 @@ class SKDetectingImageView: UIImageView {
     @objc func handleSingleTap(_ recognizer: UITapGestureRecognizer) {
         delegate?.handleImageViewSingleTap(recognizer.location(in: self))
     }
+    
+    @objc func handleLongTap(_ longTap: UILongPressGestureRecognizer) {
+        delegate?.handleLongTap(self, longGesture: longTap)
+    }
 }
 
 private extension SKDetectingImageView {
@@ -46,5 +51,8 @@ private extension SKDetectingImageView {
         let singleTap = UITapGestureRecognizer(target: self, action: #selector(handleSingleTap(_:)))
         singleTap.require(toFail: doubleTap)
         addGestureRecognizer(singleTap)
+        
+        let longTap = UILongPressGestureRecognizer(target: self, action: #selector(handleLongTap(_:)))
+        addGestureRecognizer(longTap)
     }
 }

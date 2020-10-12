@@ -86,5 +86,13 @@ import Foundation
      - Parameter index: the index of the photo
      */
     @objc optional func captionViewForPhotoAtIndex(index: Int) -> SKCaptionView?
+    
+    
+    /// Long press the event callback
+    /// - Parameters:
+    ///   - browser: reference to the calling SKPhotoBrowser
+    ///   - index: the index of the photo
+    ///   - longGesture: long gesture
+    @objc optional func longGestureAction(_ browser: SKPhotoBrowser, index: Int, longGesture: UILongPressGestureRecognizer)
 }
 
