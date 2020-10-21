@@ -1,6 +1,6 @@
 # Change Log
 
-## 6.2.3
+## 6.2.4
 ### Big Changed 
 - Add save image types to the toolBar.
 
