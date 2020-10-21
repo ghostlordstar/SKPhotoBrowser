@@ -1,5 +1,13 @@
 # Change Log
 
+## 6.2.3
+### Big Changed 
+- Add save image types to the toolBar.
+
+## 6.2.2
+### Big Changed 
+- Add long press gesture event callback.
+
 ## 6.2.1
 ### Big Changed 
 - Fix gif display problem when cache is not turned on.

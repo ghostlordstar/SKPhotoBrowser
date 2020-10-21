@@ -32,7 +32,7 @@ extension UIImageView {
 
 }
 
-extension UIImage {
+public extension UIImage {
 
     public class func sk_gif(data: Data) -> UIImage? {
         // Create source from data

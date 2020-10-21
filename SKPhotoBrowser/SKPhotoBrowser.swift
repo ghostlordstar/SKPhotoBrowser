@@ -8,6 +8,11 @@
 
 import UIKit
 
+public enum SKToolBarType {
+    case share
+    case save
+}
+
 public let SKPHOTO_LOADING_DID_END_NOTIFICATION = "photoLoadingDidEndNotification"
 
 // MARK: - SKPhotoBrowser
@@ -18,8 +23,11 @@ open class SKPhotoBrowser: UIViewController {
     open var activityItemProvider: UIActivityItemProvider?
     open var photos: [SKPhotoProtocol] = []
     open var longGestureEnable: Bool = false
-    open var longGestureAction: ((_ browser: SKPhotoBrowser, _ index: Int, _ longGesture: UILongPressGestureRecognizer)->())?
+    public var longGestureAction: ((_ browser: SKPhotoBrowser, _ index: Int, _ longGesture: UILongPressGestureRecognizer)->())?
+    public var saveImageComplete: ((_ browser: SKPhotoBrowser, _ index: Int, _ image: UIImage?, _ error: Error?) -> ())?
     
+    public var toolBarType: SKToolBarType = .share
+
     internal lazy var pagingScrollView: SKPagingScrollView = SKPagingScrollView(frame: self.view.frame, browser: self)
     
     // appearance
@@ -31,11 +39,11 @@ open class SKPhotoBrowser: UIViewController {
     fileprivate var actionView: SKActionView!
     fileprivate(set) var paginationView: SKPaginationView!
     var toolbar: SKToolbar!
-
+    
     // actions
     fileprivate var activityViewController: UIActivityViewController!
     fileprivate var panGesture: UIPanGestureRecognizer?
-
+    
     // for status check property
     fileprivate var isEndAnimationByToolBar: Bool = true
     fileprivate var isViewActive: Bool = false
@@ -50,13 +58,13 @@ open class SKPhotoBrowser: UIViewController {
     
     // delegate
     open weak var delegate: SKPhotoBrowserDelegate?
-
+    
     // statusbar initial state
     private var statusbarHidden: Bool = UIApplication.shared.isStatusBarHidden
     
     // strings
     open var cancelTitle = "Cancel"
-
+    
     // MARK: - Initializer
     required public init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
@@ -90,7 +98,7 @@ open class SKPhotoBrowser: UIViewController {
         animator.senderOriginImage = photos[currentPageIndex].underlyingImage
         animator.senderViewForAnimation = photos[currentPageIndex] as? UIView
     }
-
+    
     deinit {
         NotificationCenter.default.removeObserver(self)
     }
@@ -114,7 +122,7 @@ open class SKPhotoBrowser: UIViewController {
         configureActionView()
         configurePaginationView()
         configureToolbar()
-
+        
         animator.willPresent(self)
     }
     
@@ -134,13 +142,13 @@ open class SKPhotoBrowser: UIViewController {
         isPerformingLayout = true
         // where did start
         delegate?.didShowPhotoAtIndex?(self, index: currentPageIndex)
-
+        
         // toolbar
         toolbar.frame = frameForToolbarAtOrientation()
         
         // action
         actionView.updateFrame(frame: view.frame)
-
+        
         // paging
         switch SKCaptionOptions.captionLocation {
         case .basic:
@@ -149,7 +157,7 @@ open class SKPhotoBrowser: UIViewController {
             paginationView.frame = frameForPaginationAtOrientation()
         }
         pagingScrollView.updateFrame(view.bounds, currentPageIndex: currentPageIndex)
-
+        
         isPerformingLayout = false
     }
     
@@ -194,7 +202,7 @@ open class SKPhotoBrowser: UIViewController {
     
     open func performLayout() {
         isPerformingLayout = true
-
+        
         // reset local cache
         pagingScrollView.reload()
         pagingScrollView.updateContentOffset(currentPageIndex)
@@ -300,7 +308,7 @@ public extension SKPhotoBrowser {
                 return
             }
             isEndAnimationByToolBar = false
-
+            
             let pageFrame = frameForPageAtIndex(index)
             pagingScrollView.jumpToPageAtIndex(pageFrame)
         }
@@ -447,8 +455,8 @@ internal extension SKPhotoBrowser {
         
         let minOffset: CGFloat = viewHalfHeight / 4
         let offset: CGFloat = 1 - (zoomingScrollView.center.y > viewHalfHeight
-            ? zoomingScrollView.center.y - viewHalfHeight
-            : -(zoomingScrollView.center.y - viewHalfHeight)) / viewHalfHeight
+                                    ? zoomingScrollView.center.y - viewHalfHeight
+                                    : -(zoomingScrollView.center.y - viewHalfHeight)) / viewHalfHeight
         
         view.backgroundColor = bgColor.withAlphaComponent(max(0.7, offset))
         
@@ -464,7 +472,7 @@ internal extension SKPhotoBrowser {
                 // Continue Showing View
                 setNeedsStatusBarAppearanceUpdate()
                 view.backgroundColor = bgColor
-
+                
                 let velocityY: CGFloat = CGFloat(0.35) * sender.velocity(in: self.view).y
                 let finalX: CGFloat = firstX
                 let finalY: CGFloat = viewHalfHeight
@@ -479,8 +487,8 @@ internal extension SKPhotoBrowser {
             }
         }
     }
-   
-    @objc func actionButtonPressed(ignoreAndShare: Bool) {
+    
+    @objc func toolBarButtonPressed(ignoreAndShare: Bool) {
         delegate?.willShowActionSheet?(currentPageIndex)
         
         guard photos.count > 0 else {
@@ -541,6 +549,17 @@ internal extension SKPhotoBrowser {
             self.longGestureAction?(self, self.currentPageIndex, longGesture)
         }
     }
+    
+    /// 点击Toolbar按钮
+    @objc func toolBarAction() {
+        switch self.toolbar.toolBarType {
+        case .share:
+            self.toolBarButtonPressed(ignoreAndShare: false)
+        case .save:
+            self.toolBarSave()
+        }
+    }
+    
 }
 
 // MARK: - Private Function
@@ -559,14 +578,14 @@ private extension SKPhotoBrowser {
         pagingScrollView.delegate = self
         view.addSubview(pagingScrollView)
     }
-
+    
     func configureGestureControl() {
         guard !SKPhotoBrowserOptions.disableVerticalSwipe else { return }
         
         panGesture = UIPanGestureRecognizer(target: self, action: #selector(SKPhotoBrowser.panGestureRecognized(_:)))
         panGesture?.minimumNumberOfTouches = 1
         panGesture?.maximumNumberOfTouches = 1
-
+        
         if let panGesture = panGesture {
             view.addGestureRecognizer(panGesture)
         }
@@ -576,24 +595,24 @@ private extension SKPhotoBrowser {
         actionView = SKActionView(frame: view.frame, browser: self)
         view.addSubview(actionView)
     }
-
+    
     func configurePaginationView() {
         paginationView = SKPaginationView(frame: view.frame, browser: self)
         view.addSubview(paginationView)
     }
     
     func configureToolbar() {
-        toolbar = SKToolbar(frame: frameForToolbarAtOrientation(), browser: self)
+        toolbar = SKToolbar(frame: frameForToolbarAtOrientation(), browser: self, type: self.toolBarType)
         view.addSubview(toolbar)
     }
-
+    
     func setControlsHidden(_ hidden: Bool, animated: Bool, permanent: Bool) {
         // timer update
         cancelControlHiding()
         
         // scroll animation
         pagingScrollView.setControlsHidden(hidden: hidden)
-
+        
         // paging animation
         paginationView.setControlsHidden(hidden: hidden)
         
@@ -637,5 +656,37 @@ extension SKPhotoBrowser: UIScrollViewDelegate {
     
     public func scrollViewDidEndScrollingAnimation(_ scrollView: UIScrollView) {
         isEndAnimationByToolBar = true
+    }
+}
+
+/// save image
+extension SKPhotoBrowser {
+    
+    func toolBarSave() {
+        var image: UIImage? = nil
+        
+        if self.currentPageIndex < self.photos.count {
+            image = self.photos[self.currentPageIndex].underlyingImage
+        }
+        
+        self.saveImageToAlbum(img: image)
+    }
+    
+    func saveImageToAlbum(img: UIImage?) {
+        
+        self.delegate?.willSaveImage?(self, index: self.currentPageIndex)
+        
+        if img != nil {
+            UIImageWriteToSavedPhotosAlbum(img!, self, #selector(saveImageCallBack(img:error:contextInfo:)), nil)
+        }else {
+            self.delegate?.didSaveImage?(self, index: self.currentPageIndex, image: nil, error: NSError.init(domain: "image is nil", code: -1, userInfo: nil))
+            self.saveImageComplete?(self, self.currentPageIndex, nil, nil)
+        }
+    }
+    
+    @objc func saveImageCallBack(img: UIImage?, error: Error?, contextInfo: Any?) {
+        
+        self.delegate?.didSaveImage?(self, index: self.currentPageIndex, image: img, error: error)
+        self.saveImageComplete?(self, self.currentPageIndex, img, error)
     }
 }

@@ -94,5 +94,22 @@ import Foundation
     ///   - index: the index of the photo
     ///   - longGesture: long gesture
     @objc optional func longGestureAction(_ browser: SKPhotoBrowser, index: Int, longGesture: UILongPressGestureRecognizer)
+    
+    
+    /// save image to Album
+    /// - Parameters:
+    ///   - browser: reference to the calling SKPhotoBrowser
+    ///   - index: the index of the photo
+    @objc optional func willSaveImage(_ browser: SKPhotoBrowser, index: Int)
+    
+    
+    /// save image to Album complete
+    /// - Parameters:
+    ///   - browser: reference to the calling SKPhotoBrowser
+    ///   - index: the index of the photo
+    ///   - image: image
+    ///   - error: error
+    @objc optional func didSaveImage(_ browser: SKPhotoBrowser, index: Int, image: UIImage?, error: Error?)
+    
 }
 

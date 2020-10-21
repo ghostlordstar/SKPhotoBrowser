@@ -11,8 +11,10 @@ import Foundation
 // helpers which often used
 private let bundle = Bundle(for: SKPhotoBrowser.self)
 
-class SKToolbar: UIToolbar {
+public class SKToolbar: UIToolbar {
     var toolActionButton: UIBarButtonItem!
+    private(set) var toolBarType: SKToolBarType = .share
+    
     fileprivate weak var browser: SKPhotoBrowser?
     
     required init?(coder aDecoder: NSCoder) {
@@ -23,15 +25,16 @@ class SKToolbar: UIToolbar {
         super.init(frame: frame)
     }
     
-    convenience init(frame: CGRect, browser: SKPhotoBrowser) {
+    convenience init(frame: CGRect, browser: SKPhotoBrowser, type: SKToolBarType? = .share) {
         self.init(frame: frame)
         self.browser = browser
+        self.toolBarType = type ?? .share
         
         setupApperance()
         setupToolbar()
     }
     
-    override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+    public override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
         if let view = super.hitTest(point, with: event) {
             if SKMesurement.screenWidth - point.x < 50 { // FIXME: not good idea
                 return view
@@ -50,7 +53,15 @@ private extension SKToolbar {
     }
     
     func setupToolbar() {
-        toolActionButton = UIBarButtonItem(barButtonSystemItem: .action, target: browser, action: #selector(SKPhotoBrowser.actionButtonPressed))
+        switch self.toolBarType {
+        case .share:
+            toolActionButton = UIBarButtonItem(barButtonSystemItem: .action, target: browser, action: #selector(SKPhotoBrowser.toolBarAction))
+            
+        case .save:
+            
+            toolActionButton = UIBarButtonItem.init(image: UIImage(named: "SKPhotoBrowser.bundle/images/toolbar_download_wh", in: bundle, compatibleWith: nil) ?? UIImage(), style: UIBarButtonItem.Style.plain, target: browser, action: #selector(SKPhotoBrowser.toolBarAction))
+        }
+        
         toolActionButton.tintColor = UIColor.white
         
         var items = [UIBarButtonItem]()

@@ -60,6 +60,10 @@ extension FromLocalViewController {
         let browser = SKPhotoBrowser(photos: images, initialPageIndex: indexPath.row)
         browser.delegate = self
         browser.longGestureEnable = true
+        browser.toolBarType = .save
+        browser.saveImageComplete = { (browser, index, img, error) in
+            print("save image, error: \(error), img:\(img)")
+        }
         present(browser, animated: true, completion: {})
     }
     
